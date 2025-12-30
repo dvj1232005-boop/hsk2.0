@@ -3,153 +3,198 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,viewport-fit=cover">
-<title>HanVocab Ultimate</title>
+<title>HanVocab</title>
 
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="HanVocab">
-<meta name="theme-color" content="#0b1020">
+<meta name="theme-color" content="#111111">
 <link rel="apple-touch-icon" href="icon-190.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
 :root{
- --bg:#0b1020;--card:#121833;--accent:#4fd1ff;--soft:#1e2a55;
- --ok:#22c55e;--bad:#ef4444;--text:#f8fafc;--muted:#94a3b8;
+  --bg:#111111;
+  --surface:#1c1c1e;
+  --border:#2c2c2e;
+  --text:#f2f2f7;
+  --muted:#8e8e93;
+  --accent:#0a84ff;
+  --ok:#34c759;
+  --bad:#ff453a;
 }
 *{box-sizing:border-box}
+
 body{
- margin:0;
- background:radial-gradient(1200px 600px at top,#121833,#0b1020);
- color:var(--text);
- font-family:'Inter',-apple-system,BlinkMacSystemFont;
- min-height:100vh;
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont;
+  -webkit-font-smoothing:antialiased;
 }
+
 header{
- padding:18px 16px 10px;
- text-align:center;
- font-weight:800;
- font-size:18px;
+  position:sticky;
+  top:0;
+  z-index:10;
+  padding:14px 16px 10px;
+  text-align:center;
+  font-weight:600;
+  background:rgba(17,17,17,.88);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
 }
-.wrap{max-width:520px;margin:auto;padding:12px 16px 28px}
-.card{
- background:linear-gradient(180deg,#141b3c,#0f1530);
- border-radius:28px;
- padding:22px;
- margin-bottom:16px;
- box-shadow:0 20px 40px rgba(0,0,0,.45);
- text-align:center;
+
+.wrap{
+  max-width:520px;
+  margin:auto;
+  padding:20px 18px 40px;
 }
-.han{
- font-family:'Noto Sans SC','Inter';
- font-size:48px;
- font-weight:700;
- letter-spacing:2px;
- margin:10px 0;
+
+.control{
+  display:grid;
+  gap:10px;
+  margin-bottom:18px;
 }
-.pin{color:var(--accent);margin-top:8px}
-.vi{color:#c7ecff;margin-top:6px}
-.hide{display:none}
+
 select,button,input{
- width:100%;
- padding:14px 16px;
- border-radius:18px;
- border:none;
- background:#0b1020;
- color:var(--text);
- font-size:15px;
+  width:100%;
+  padding:14px 16px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  color:var(--text);
+  font-size:15px;
 }
-select{border:1px solid var(--soft)}
+
 button{
- background:linear-gradient(135deg,#4fd1ff,#38bdf8);
- color:#04121f;
- font-weight:800;
+  background:var(--accent);
+  color:white;
+  border:none;
+  font-weight:500;
 }
 button.alt{
- background:transparent;
- color:var(--accent);
- border:1px solid var(--soft);
+  background:transparent;
+  color:var(--accent);
+  border:1px solid var(--border);
 }
+
+.card{
+  background:var(--surface);
+  border-radius:20px;
+  padding:36px 24px;
+  border:1px solid var(--border);
+  margin-bottom:16px;
+  animation:appear .32s cubic-bezier(.25,.1,.25,1);
+}
+@keyframes appear{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:none}
+}
+
+.han{
+  font-family:'Noto Sans SC','Inter';
+  font-size:60px;
+  font-weight:400;
+  letter-spacing:8px;
+  line-height:1.25;
+  text-align:center;
+}
+.pin{
+  text-align:center;
+  color:var(--accent);
+  margin-top:12px;
+  font-size:15px;
+  opacity:.9;
+}
+.vi{
+  text-align:center;
+  color:#d6eaff;
+  margin-top:6px;
+  font-size:15px;
+  opacity:.9;
+}
+
 .progress{
- height:6px;
- background:#1e2a55;
- border-radius:6px;
- overflow:hidden;
- margin:8px 4px 14px;
+  height:3px;
+  background:#2c2c2e;
+  border-radius:999px;
+  overflow:hidden;
+  margin:16px 4px;
+  opacity:.85;
 }
 .bar{
- height:100%;
- width:0%;
- background:linear-gradient(90deg,#4fd1ff,#22d3ee);
+  height:100%;
+  width:0%;
+  background:var(--accent);
 }
+
 .options button{
- margin:8px 0;
- background:#0b1020;
- border:1px solid var(--soft);
- font-weight:600;
+  background:var(--surface);
+  border:1px solid var(--border);
+  margin:8px 0;
 }
-.correct{background:linear-gradient(135deg,#22c55e,#4ade80)!important;color:#052e14}
-.wrong{background:linear-gradient(135deg,#ef4444,#f87171)!important;color:#450a0a}
+.correct{background:var(--ok)!important}
+.wrong{background:var(--bad)!important}
+
 .footer{
- text-align:center;
- font-size:12px;
- color:var(--muted);
- padding:20px 0;
+  margin-top:28px;
+  text-align:center;
+  font-size:12px;
+  color:var(--muted);
 }
+
+.hide{display:none}
 </style>
 </head>
 
 <body>
-<header>📘 HanVocab Ultimate</header>
+<header>HanVocab</header>
 
 <div class="wrap">
 
-<div class="card">
-<select id="lesson"></select>
-<select id="mode">
-<option value="study">📖 Flashcard</option>
-<option value="quiz">❓ Hán → Việt</option>
-<option value="vi2han">🔁 Việt → Hán</option>
-<option value="write">✍️ Viết từ</option>
-<option value="wrong">🔁 Ôn từ sai</option>
-</select>
-<button class="alt" onclick="toggle()">👁 Pinyin + Việt</button>
+<div class="control">
+  <select id="lesson"></select>
+  <select id="mode">
+    <option value="study">Flashcard</option>
+    <option value="quiz">Hán → Việt</option>
+    <option value="vi2han">Việt → Hán</option>
+    <option value="write">Viết từ</option>
+  </select>
+  <button class="alt" onclick="toggle()">Hiện / Ẩn nghĩa</button>
 </div>
 
 <div class="progress"><div class="bar" id="bar"></div></div>
 
 <div class="card">
-<div class="han" id="han"></div>
-<div class="pin hide" id="pin"></div>
-<div class="vi hide" id="vi"></div>
+  <div class="han" id="han">—</div>
+  <div class="pin hide" id="pin"></div>
+  <div class="vi hide" id="vi"></div>
 </div>
 
 <div class="card hide" id="quizBox"><div class="options" id="opts"></div></div>
 
 <div class="card hide" id="writeBox">
-<input id="input" placeholder="Gõ HÁN hoặc PINYIN (Enter)">
-<button onclick="check()">Kiểm tra</button>
-<p id="res"></p>
+  <input id="input" placeholder="Gõ HÁN hoặc PINYIN (Enter)">
+  <button onclick="check()">Kiểm tra</button>
+  <p id="res"></p>
 </div>
 
-<button onclick="next()">➡️ Tiếp</button>
+<button onclick="next()">Tiếp</button>
 
 <div class="footer">
-  Offline • Fullscreen iPhone • Đủ 10 bài<br>
+  Offline • Fullscreen iPhone<br>
   © Developed by <strong>Dao Dang Tung</strong>
 </div>
+
 </div>
 
 <script>
-/*
- HanVocab Ultimate
- © Developed by Dao Dang Tung
-*/
-
+/* ================= FULL DATA 10 BÀI ================= */
 const DATA = {
 1:[
 {h:"放假",p:"fàngjià",v:"nghỉ lễ"},
@@ -352,7 +397,8 @@ const DATA = {
 ]
 };
 
-let L=1,i=0,show=false,mode="study",wrong={};
+/* ================= LOGIC ================= */
+let L=1,i=0,show=false,mode="study";
 const han=document.getElementById("han"),
 pin=document.getElementById("pin"),
 vi=document.getElementById("vi"),
@@ -360,76 +406,63 @@ bar=document.getElementById("bar"),
 lessonSel=document.getElementById("lesson");
 
 for(let k in DATA){
- let o=document.createElement("option");
- o.value=k;o.text="Bài "+k;
- lessonSel.appendChild(o);
+  const o=document.createElement("option");
+  o.value=k;o.text="Bài "+k;
+  lessonSel.appendChild(o);
 }
-lessonSel.onchange=e=>{L=+e.target.value;i=0;render()}
+lessonSel.onchange=e=>{L=+e.target.value;i=0;render();}
 
 document.getElementById("mode").onchange=e=>{
- mode=e.target.value;
- document.getElementById("quizBox").classList.toggle("hide",!["quiz","vi2han"].includes(mode));
- document.getElementById("writeBox").classList.toggle("hide",mode!=="write");
+  mode=e.target.value;
+  document.getElementById("quizBox").classList.toggle("hide",mode==="study");
+  document.getElementById("writeBox").classList.toggle("hide",mode!=="write");
 };
 
-function toggle(){show=!show;pin.classList.toggle("hide",!show);vi.classList.toggle("hide",!show)}
-function next(){i=(i+1)%DATA[L].length;render()}
+function toggle(){
+  show=!show;
+  pin.classList.toggle("hide",!show);
+  vi.classList.toggle("hide",!show);
+}
+function next(){i=(i+1)%DATA[L].length;render();}
 
 function render(){
- const w=DATA[L][i];
- han.textContent=w.h;
- pin.textContent=w.p;
- vi.textContent=w.v;
- bar.style.width=((i+1)/DATA[L].length*100)+"%";
- if(["quiz","vi2han"].includes(mode))quiz(w);
+  const w=DATA[L][i];
+  han.textContent=w.h;
+  pin.textContent=w.p;
+  vi.textContent=w.v;
+  bar.style.width=((i+1)/DATA[L].length*100)+"%";
+  if(mode!=="study")quiz(w);
 }
 
 function quiz(w){
- const box=document.getElementById("opts");box.innerHTML="";
- let correct=mode==="quiz"?w.v:w.h;
- let pool=DATA[L].map(x=>mode==="quiz"?x.v:x.h);
- let arr=[correct];
- while(arr.length<4){
-  let r=pool[Math.floor(Math.random()*pool.length)];
-  if(!arr.includes(r))arr.push(r);
- }
- arr.sort(()=>Math.random()-.5);
- arr.forEach(t=>{
-  let b=document.createElement("button");
-  b.textContent=t;
-  b.onclick=()=>{
-   if(t===correct)b.classList.add("correct");
-   else{b.classList.add("wrong");navigator.vibrate?.(60)}
-  };
-  box.appendChild(b);
- });
+  const box=document.getElementById("opts");
+  box.innerHTML="";
+  const correct=mode==="quiz"?w.v:w.h;
+  const pool=DATA[L].map(x=>mode==="quiz"?x.v:x.h);
+  const arr=[correct];
+  while(arr.length<4){
+    const r=pool[Math.floor(Math.random()*pool.length)];
+    if(!arr.includes(r))arr.push(r);
+  }
+  arr.sort(()=>Math.random()-.5);
+  arr.forEach(t=>{
+    const b=document.createElement("button");
+    b.textContent=t;
+    b.onclick=()=>b.classList.add(t===correct?"correct":"wrong");
+    box.appendChild(b);
+  });
 }
 
 function check(){
- const v=document.getElementById("input").value.trim();
- const w=DATA[L][i];
- document.getElementById("res").textContent=
- (v===w.h||v===w.p)?"✅ Đúng":"❌ Sai";
+  const v=document.getElementById("input").value.trim();
+  const w=DATA[L][i];
+  document.getElementById("res").textContent=
+    (v===w.h||v===w.p)?"✅ Đúng":"❌ Sai";
 }
 
 document.getElementById("input").addEventListener("keydown",e=>{
- if(e.key==="Enter") check();
+  if(e.key==="Enter")check();
 });
-
-/* SWIPE */
-let x0=null;
-document.addEventListener("touchstart",e=>x0=e.touches[0].clientX);
-document.addEventListener("touchend",e=>{
- if(!x0)return;
- let dx=e.changedTouches[0].clientX-x0;
- if(dx<-40)next();
- x0=null;
-});
-
-/* SERVICE WORKER */
-if("serviceWorker" in navigator){
- navigator.serviceWorker.register("sw.js");
-}
 
 render();
 </script>
