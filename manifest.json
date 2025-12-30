@@ -1,0 +1,22 @@
+{
+  "name": "HanVocab Ultimate",
+  "short_name": "HanVocab",
+  "description": "Học từ vựng tiếng Trung – 10 bài – Offline",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b1020",
+  "theme_color": "#0b1020",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-190.png",
+      "sizes": "190x190",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-500.png",
+      "sizes": "500x500",
+      "type": "image/png"
+    }
+  ]
+}
