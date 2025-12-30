@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,viewport-fit=cover">
+<title>HanVocab Ultimate</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="HanVocab">
+<meta name="theme-color" content="#0b1020">
+<link rel="apple-touch-icon" href="icon-190.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+ --bg:#0b1020;--card:#121833;--accent:#4fd1ff;--soft:#1e2a55;
+ --ok:#22c55e;--bad:#ef4444;--text:#f8fafc;--muted:#94a3b8;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;
+ background:radial-gradient(1200px 600px at top,#121833,#0b1020);
+ color:var(--text);
+ font-family:'Inter',-apple-system,BlinkMacSystemFont;
+ min-height:100vh;
+}
+header{
+ padding:18px 16px 10px;
+ text-align:center;
+ font-weight:800;
+ font-size:18px;
+}
+.wrap{max-width:520px;margin:auto;padding:12px 16px 28px}
+.card{
+ background:linear-gradient(180deg,#141b3c,#0f1530);
+ border-radius:28px;
+ padding:22px;
+ margin-bottom:16px;
+ box-shadow:0 20px 40px rgba(0,0,0,.45);
+ text-align:center;
+}
+.han{
+ font-family:'Noto Sans SC','Inter';
+ font-size:48px;
+ font-weight:700;
+ letter-spacing:2px;
+ margin:10px 0;
+}
+.pin{color:var(--accent);margin-top:8px}
+.vi{color:#c7ecff;margin-top:6px}
+.hide{display:none}
+select,button,input{
+ width:100%;
+ padding:14px 16px;
+ border-radius:18px;
+ border:none;
+ background:#0b1020;
+ color:var(--text);
+ font-size:15px;
+}
+select{border:1px solid var(--soft)}
+button{
+ background:linear-gradient(135deg,#4fd1ff,#38bdf8);
+ color:#04121f;
+ font-weight:800;
+}
+button.alt{
+ background:transparent;
+ color:var(--accent);
+ border:1px solid var(--soft);
+}
+.progress{
+ height:6px;
+ background:#1e2a55;
+ border-radius:6px;
+ overflow:hidden;
+ margin:8px 4px 14px;
+}
+.bar{
+ height:100%;
+ width:0%;
+ background:linear-gradient(90deg,#4fd1ff,#22d3ee);
+}
+.options button{
+ margin:8px 0;
+ background:#0b1020;
+ border:1px solid var(--soft);
+ font-weight:600;
+}
+.correct{background:linear-gradient(135deg,#22c55e,#4ade80)!important;color:#052e14}
+.wrong{background:linear-gradient(135deg,#ef4444,#f87171)!important;color:#450a0a}
+.footer{
+ text-align:center;
+ font-size:12px;
+ color:var(--muted);
+ padding:20px 0;
+}
+</style>
+</head>
+
+<body>
+<header>📘 HanVocab Ultimate</header>
+
+<div class="wrap">
+
+<div class="card">
+<select id="lesson"></select>
+<select id="mode">
+<option value="study">📖 Flashcard</option>
+<option value="quiz">❓ Hán → Việt</option>
+<option value="vi2han">🔁 Việt → Hán</option>
+<option value="write">✍️ Viết từ</option>
+<option value="wrong">🔁 Ôn từ sai</option>
+</select>
+<button class="alt" onclick="toggle()">👁 Pinyin + Việt</button>
+</div>
+
+<div class="progress"><div class="bar" id="bar"></div></div>
+
+<div class="card">
+<div class="han" id="han"></div>
+<div class="pin hide" id="pin"></div>
+<div class="vi hide" id="vi"></div>
+</div>
+
+<div class="card hide" id="quizBox"><div class="options" id="opts"></div></div>
+
+<div class="card hide" id="writeBox">
+<input id="input" placeholder="Gõ HÁN hoặc PINYIN (Enter)">
+<button onclick="check()">Kiểm tra</button>
+<p id="res"></p>
+</div>
+
+<button onclick="next()">➡️ Tiếp</button>
+
+<div class="footer">
+  Offline • Fullscreen iPhone • Đủ 10 bài<br>
+  © Developed by <strong>Dao Dang Tung</strong>
+</div>
+</div>
+
+<script>
+/*
+ HanVocab Ultimate
+ © Developed by Dao Dang Tung
+*/
+
+const DATA = {
+1:[
+{h:"放假",p:"fàngjià",v:"nghỉ lễ"},
+{h:"假",p:"jià",v:"kỳ nghỉ"},
+{h:"节日",p:"jiérì",v:"lễ tết"},
+{h:"有的",p:"yǒude",v:"có"},
+{h:"比如",p:"bǐrú",v:"ví dụ"},
+{h:"开始",p:"kāishǐ",v:"bắt đầu"},
+{h:"请假",p:"qǐngjià",v:"xin nghỉ"},
+{h:"结婚",p:"jiéhūn",v:"kết hôn"},
+{h:"热情",p:"rèqíng",v:"nhiệt tình"},
+{h:"开车",p:"kāichē",v:"lái xe"},
+{h:"开",p:"kāi",v:"lái"},
+{h:"车",p:"chē",v:"xe"},
+{h:"辆",p:"liàng",v:"chiếc"},
+{h:"带",p:"dài",v:"mang"},
+{h:"高速公路",p:"gāosù gōnglù",v:"cao tốc"},
+{h:"堵",p:"dǔ",v:"kẹt"},
+{h:"一会儿",p:"yíhuìr",v:"một lát"},
+{h:"免费",p:"miǎnfèi",v:"miễn phí"},
+{h:"飞机",p:"fēijī",v:"máy bay"}
+],
+2:[
+{h:"宿舍",p:"sùshè",v:"ký túc xá"},
+{h:"国庆节",p:"guóqìngjié",v:"quốc khánh"},
+{h:"中秋节",p:"zhōngqiūjié",v:"trung thu"},
+{h:"通过",p:"tōngguò",v:"thông qua"},
+{h:"如果",p:"rúguǒ",v:"nếu"},
+{h:"同意",p:"tóngyì",v:"đồng ý"},
+{h:"死",p:"sǐ",v:"chết"},
+{h:"场",p:"chǎng",v:"cuộc"},
+{h:"满意",p:"mǎnyì",v:"hài lòng"},
+{h:"竞争",p:"jìngzhēng",v:"cạnh tranh"},
+{h:"厉害",p:"lìhai",v:"giỏi"},
+{h:"电子",p:"diànzǐ",v:"điện tử"},
+{h:"邮件",p:"yóujiàn",v:"email"},
+{h:"通知",p:"tōngzhī",v:"thông báo"},
+{h:"希望",p:"xīwàng",v:"hy vọng"},
+{h:"早就",p:"zǎojiù",v:"đã lâu"},
+{h:"祝",p:"zhù",v:"chúc"},
+{h:"完",p:"wán",v:"xong"}
+],
+3:[
+{h:"毕业",p:"bìyè",v:"tốt nghiệp"},
+{h:"实习",p:"shíxí",v:"thực tập"},
+{h:"简历",p:"jiǎnlì",v:"CV"},
+{h:"面试",p:"miànshì",v:"phỏng vấn"},
+{h:"邮局",p:"yóujú",v:"bưu điện"},
+{h:"快递",p:"kuàidì",v:"chuyển phát"},
+{h:"寄",p:"jì",v:"gửi"},
+{h:"快递员",p:"kuàidìyuán",v:"bưu tá"},
+{h:"取",p:"qǔ",v:"lấy"},
+{h:"包",p:"bāo",v:"gói"},
+{h:"检查",p:"jiǎnchá",v:"kiểm tra"},
+{h:"大概",p:"dàgài",v:"khoảng"},
+{h:"公斤",p:"gōngjīn",v:"kg"},
+{h:"重",p:"zhòng",v:"nặng"},
+{h:"女士",p:"nǚshì",v:"bà/cô"},
+{h:"楼",p:"lóu",v:"tầng"},
+{h:"修",p:"xiū",v:"sửa"},
+{h:"信",p:"xìn",v:"thư"},
+{h:"停",p:"tíng",v:"dừng"},
+{h:"放",p:"fàng",v:"đặt"}
+],
+4:[
+{h:"报纸",p:"bàozhǐ",v:"báo"},
+{h:"杂志",p:"zázhì",v:"tạp chí"},
+{h:"入住",p:"rùzhù",v:"nhận phòng"},
+{h:"住",p:"zhù",v:"ở"},
+{h:"预订",p:"yùdìng",v:"đặt trước"},
+{h:"单人间",p:"dānrénjiān",v:"phòng đơn"},
+{h:"押金",p:"yājīn",v:"tiền cọc"},
+{h:"收据",p:"shōujù",v:"biên lai"},
+{h:"租房",p:"zūfáng",v:"thuê nhà"},
+{h:"宾馆",p:"bīnguǎn",v:"khách sạn"},
+{h:"密码",p:"mìmǎ",v:"mật khẩu"},
+{h:"桌子",p:"zhuōzi",v:"bàn"},
+{h:"家具",p:"jiājù",v:"nội thất"},
+{h:"餐厅",p:"cāntīng",v:"nhà hàng"},
+{h:"按照",p:"ànzhào",v:"theo"},
+{h:"原来",p:"yuánlái",v:"thì ra"},
+{h:"地图",p:"dìtú",v:"bản đồ"},
+{h:"张",p:"zhāng",v:"tờ"},
+{h:"光临",p:"guānglín",v:"ghé thăm"},
+{h:"租",p:"zū",v:"thuê"}
+],
+5:[
+{h:"房租",p:"fángzū",v:"tiền thuê"},
+{h:"厅",p:"tīng",v:"phòng khách"},
+{h:"套",p:"tào",v:"căn"},
+{h:"家用电器",p:"jiāyòng diànqì",v:"đồ điện"},
+{h:"房产",p:"fángchǎn",v:"bất động sản"},
+{h:"合同",p:"hétóng",v:"hợp đồng"},
+{h:"刚才",p:"gāngcái",v:"vừa mới"},
+{h:"电冰箱",p:"diànbīngxiāng",v:"tủ lạnh"},
+{h:"洗衣机",p:"xǐyījī",v:"máy giặt"},
+{h:"空调",p:"kōngtiáo",v:"điều hòa"},
+{h:"旧",p:"jiù",v:"cũ"},
+{h:"美观",p:"měiguān",v:"đẹp"},
+{h:"经",p:"jīng",v:"trải qua"},
+{h:"不过",p:"búguò",v:"nhưng"},
+{h:"倒霉",p:"dǎoméi",v:"xui"},
+{h:"死机",p:"sǐjī",v:"sập máy"},
+{h:"病毒",p:"bìngdú",v:"virus"},
+{h:"感染",p:"gǎnrǎn",v:"lây"},
+{h:"杀毒",p:"shādú",v:"diệt virus"},
+{h:"文件",p:"wénjiàn",v:"tài liệu"}
+],
+6:[
+{h:"删除",p:"shānchú",v:"xóa"},
+{h:"U盘",p:"U pán",v:"USB"},
+{h:"严重",p:"yánzhòng",v:"nghiêm trọng"},
+{h:"重要",p:"zhòngyào",v:"quan trọng"},
+{h:"退休",p:"tuìxiū",v:"nghỉ hưu"},
+{h:"着急",p:"zháojí",v:"sốt ruột"},
+{h:"开通",p:"kāitōng",v:"mở"},
+{h:"偷",p:"tōu",v:"trộm"},
+{h:"放心",p:"fàngxīn",v:"yên tâm"},
+{h:"美元",p:"měiyuán",v:"USD"},
+{h:"换",p:"huàn",v:"đổi"},
+{h:"成",p:"chéng",v:"thành"},
+{h:"人民币",p:"rénmínbì",v:"NDT"},
+{h:"表",p:"biǎo",v:"bảng"},
+{h:"翻译",p:"fānyì",v:"dịch"},
+{h:"汇率",p:"huìlǜ",v:"tỷ giá"},
+{h:"护照",p:"hùzhào",v:"hộ chiếu"},
+{h:"信用卡",p:"xìnyòngkǎ",v:"thẻ tín dụng"},
+{h:"借记卡",p:"jièjìkǎ",v:"thẻ ghi nợ"}
+],
+7:[
+{h:"地址",p:"dìzhǐ",v:"địa chỉ"},
+{h:"修改",p:"xiūgǎi",v:"sửa"},
+{h:"收",p:"shōu",v:"thu"},
+{h:"手续",p:"shǒuxù",v:"thủ tục"},
+{h:"钱包",p:"qiánbāo",v:"ví"},
+{h:"安检",p:"ānjiǎn",v:"an ninh"},
+{h:"打火机",p:"dǎhuǒjī",v:"bật lửa"},
+{h:"扔",p:"rēng",v:"vứt"},
+{h:"垃圾桶",p:"lājītǒng",v:"thùng rác"},
+{h:"登机牌",p:"dēngjīpái",v:"thẻ bay"},
+{h:"旅行箱",p:"lǚxíngxiāng",v:"vali"},
+{h:"托盘",p:"tuōpán",v:"khay"},
+{h:"外衣",p:"wàiyī",v:"áo khoác"},
+{h:"脱",p:"tuō",v:"cởi"},
+{h:"身份证",p:"shēnfènzhèng",v:"CMND"},
+{h:"打开",p:"dǎkāi",v:"mở"},
+{h:"水果刀",p:"shuǐguǒdāo",v:"dao gọt"},
+{h:"刀",p:"dāo",v:"dao"}
+],
+8:[
+{h:"行李",p:"xíngli",v:"hành lý"},
+{h:"超重",p:"chāozhòng",v:"quá cân"},
+{h:"电子秤",p:"diànzǐchèng",v:"cân điện tử"},
+{h:"称",p:"chēng",v:"cân"},
+{h:"衬衫",p:"chènshān",v:"sơ mi"},
+{h:"出发",p:"chūfā",v:"xuất phát"},
+{h:"航班",p:"hángbān",v:"chuyến bay"},
+{h:"来得及",p:"láidejí",v:"kịp"},
+{h:"送",p:"sòng",v:"tiễn"},
+{h:"机场",p:"jīchǎng",v:"sân bay"},
+{h:"美好",p:"měihǎo",v:"tốt đẹp"},
+{h:"回忆",p:"huíyì",v:"hồi ức"},
+{h:"舍不得",p:"shěbude",v:"không nỡ"}
+],
+9:[
+{h:"离开",p:"líkāi",v:"rời đi"},
+{h:"难过",p:"nánguò",v:"buồn"},
+{h:"一路平安",p:"yílù píng’ān",v:"bình an"},
+{h:"全家福",p:"quánjiāfú",v:"ảnh gia đình"},
+{h:"抽烟",p:"chōuyān",v:"hút thuốc"},
+{h:"烟",p:"yān",v:"thuốc lá"},
+{h:"所以",p:"suǒyǐ",v:"cho nên"},
+{h:"戒",p:"jiè",v:"cai"},
+{h:"一模一样",p:"yímú-yíyàng",v:"giống hệt"},
+{h:"仔细",p:"zǐxì",v:"cẩn thận"},
+{h:"戴",p:"dài",v:"đeo"},
+{h:"眼镜",p:"yǎnjìng",v:"kính"},
+{h:"样子",p:"yàngzi",v:"dáng"},
+{h:"少",p:"shǎo",v:"ít"},
+{h:"旁边",p:"pángbiān",v:"bên cạnh"},
+{h:"小时候",p:"xiǎoshíhou",v:"hồi nhỏ"}
+],
+10:[
+{h:"菜",p:"cài",v:"món ăn"},
+{h:"花儿",p:"huār",v:"hoa"},
+{h:"开心",p:"kāixīn",v:"vui"},
+{h:"笑",p:"xiào",v:"cười"},
+{h:"照相",p:"zhàoxiàng",v:"chụp ảnh"},
+{h:"打扮",p:"dǎban",v:"ăn mặc"},
+{h:"美好",p:"měihǎo",v:"tốt đẹp"},
+{h:"回忆",p:"huíyì",v:"hồi ức"},
+{h:"舍不得",p:"shěbude",v:"không nỡ"},
+{h:"离开",p:"líkāi",v:"rời đi"},
+{h:"难过",p:"nánguò",v:"buồn"},
+{h:"一路平安",p:"yílù píng’ān",v:"bình an"},
+{h:"送",p:"sòng",v:"tiễn"},
+{h:"机场",p:"jīchǎng",v:"sân bay"},
+{h:"来得及",p:"láidejí",v:"kịp"},
+{h:"航班",p:"hángbān",v:"chuyến bay"}
+]
+};
+
+let L=1,i=0,show=false,mode="study",wrong={};
+const han=document.getElementById("han"),
+pin=document.getElementById("pin"),
+vi=document.getElementById("vi"),
+bar=document.getElementById("bar"),
+lessonSel=document.getElementById("lesson");
+
+for(let k in DATA){
+ let o=document.createElement("option");
+ o.value=k;o.text="Bài "+k;
+ lessonSel.appendChild(o);
+}
+lessonSel.onchange=e=>{L=+e.target.value;i=0;render()}
+
+document.getElementById("mode").onchange=e=>{
+ mode=e.target.value;
+ document.getElementById("quizBox").classList.toggle("hide",!["quiz","vi2han"].includes(mode));
+ document.getElementById("writeBox").classList.toggle("hide",mode!=="write");
+};
+
+function toggle(){show=!show;pin.classList.toggle("hide",!show);vi.classList.toggle("hide",!show)}
+function next(){i=(i+1)%DATA[L].length;render()}
+
+function render(){
+ const w=DATA[L][i];
+ han.textContent=w.h;
+ pin.textContent=w.p;
+ vi.textContent=w.v;
+ bar.style.width=((i+1)/DATA[L].length*100)+"%";
+ if(["quiz","vi2han"].includes(mode))quiz(w);
+}
+
+function quiz(w){
+ const box=document.getElementById("opts");box.innerHTML="";
+ let correct=mode==="quiz"?w.v:w.h;
+ let pool=DATA[L].map(x=>mode==="quiz"?x.v:x.h);
+ let arr=[correct];
+ while(arr.length<4){
+  let r=pool[Math.floor(Math.random()*pool.length)];
+  if(!arr.includes(r))arr.push(r);
+ }
+ arr.sort(()=>Math.random()-.5);
+ arr.forEach(t=>{
+  let b=document.createElement("button");
+  b.textContent=t;
+  b.onclick=()=>{
+   if(t===correct)b.classList.add("correct");
+   else{b.classList.add("wrong");navigator.vibrate?.(60)}
+  };
+  box.appendChild(b);
+ });
+}
+
+function check(){
+ const v=document.getElementById("input").value.trim();
+ const w=DATA[L][i];
+ document.getElementById("res").textContent=
+ (v===w.h||v===w.p)?"✅ Đúng":"❌ Sai";
+}
+
+document.getElementById("input").addEventListener("keydown",e=>{
+ if(e.key==="Enter") check();
+});
+
+/* SWIPE */
+let x0=null;
+document.addEventListener("touchstart",e=>x0=e.touches[0].clientX);
+document.addEventListener("touchend",e=>{
+ if(!x0)return;
+ let dx=e.changedTouches[0].clientX-x0;
+ if(dx<-40)next();
+ x0=null;
+});
+
+/* SERVICE WORKER */
+if("serviceWorker" in navigator){
+ navigator.serviceWorker.register("sw.js");
+}
+
+render();
+</script>
+</body>
+</html>
